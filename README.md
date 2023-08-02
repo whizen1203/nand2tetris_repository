@@ -2,8 +2,8 @@
 ## nand2tetris_repository 크기2
 ### nand2tetris_repository 크기3
 #### nand2tetris_repository 크기4
-###### nand2tetris_repository 크기5
-####### nand2tetris_repository 크기6
+##### nand2tetris_repository 크기5
+###### nand2tetris_repository 크기6
 
 밑줄?
 ======
