@@ -5,9 +5,9 @@
 ##### nand2tetris_repository 크기5
 ###### nand2tetris_repository 크기6
 
-밑줄?
+밑줄 =5개
 ======
-밑줄2?
+밑줄2 -5개
 -----
 
 이텔릭체는 *별표(Asterisk)* 혹은 _언더바(Under Bar)_ 로 표기합니다. 
