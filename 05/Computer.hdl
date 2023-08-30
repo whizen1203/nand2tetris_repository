@@ -1,0 +1,44 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/Computer.hdl
+
+/**
+ * The HACK computer, including CPU, ROM and RAM.
+ * When reset is 0, the program stored in the computer's ROM executes.
+ * When reset is 1, the execution of the program restarts. 
+ * Thus, to start a program's execution, reset must be pushed "up" (1)
+ * and "down" (0). From this point onward the user is at the mercy of 
+ * the software. In particular, depending on the program's code, the 
+ * screen may show some output and the user may be able to interact 
+ * with the computer via the keyboard.
+ */
+
+CHIP Computer {  // "Computer"라는 칩을 정의
+
+    IN reset;  // 입력으로 "reset" 신호를 받음
+
+    PARTS:
+    // 부품들을 정의하는 부분
+
+    ROM32K(address=pc, out=instruction);  
+    // 32K 크기의 읽기 전용 메모리 (ROM). 프로그램 카운터(pc)의 값에 따라 해당 주소에서 명령어(instruction)를 가져온다.
+
+    CPU(inM=memOut, instruction=instruction, reset=reset, outM=outM, 
+       writeM=writeM, addressM=addressM, pc=pc);  
+    // 중앙 처리 장치(CPU). 여러 입력과 출력을 다룬다. 
+    // - inM: 메모리에서 읽어온 데이터
+    // - instruction: 명령어
+    // - reset: 리셋 신호
+    // - outM: 메모리에 쓸 데이터
+    // - writeM: 메모리에 쓰기를 할지 결정하는 플래그
+    // - addressM: 메모리 주소
+    // - pc: 다음에 실행할 명령어의 주소
+
+    Memory(in=outM, load=writeM, address=addressM, out=memOut);
+    // 메모리. CPU가 제공하는 정보를 토대로 데이터를 저장하거나 불러옴.
+    // - in: 저장할 데이터
+    // - load: 데이터를 저장할지 여부
+    // - address: 데이터를 저장하거나 불러올 메모리의 주소
+    // - out: 불러온 데이터
+}

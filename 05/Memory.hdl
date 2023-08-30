@@ -1,0 +1,47 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/Memory.hdl
+
+/**
+ * The complete address space of the Hack computer's memory,
+ * including RAM and memory-mapped I/O. 
+ * The chip facilitates read and write operations, as follows:
+ *     Read:  out(t) = Memory[address(t)](t)
+ *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
+ * In words: the chip always outputs the value stored at the memory 
+ * location specified by address. If load==1, the in value is loaded 
+ * into the memory location specified by address. This value becomes 
+ * available through the out output from the next time step onward.
+ * Address space rules:
+ * Only the upper 16K+8K+1 words of the Memory chip are used. 
+ * Access to address>0x6000 is invalid. Access to any address in 
+ * the range 0x4000-0x5FFF results in accessing the screen memory 
+ * map. Access to address 0x6000 results in accessing the keyboard 
+ * memory map. The behavior in these addresses is described in the 
+ * Screen and Keyboard chip specifications given in the book.
+ */
+
+CHIP Memory {
+    IN in[16], load, address[15];  // 입력: 16비트 데이터, 로드 플래그, 15비트 주소
+    OUT out[16];                   // 출력: 16비트 데이터
+
+    PARTS:
+    // 로드 플래그를 4개의 분기로 나눈다. 주소의 13-14번 비트를 선택자로 사용
+	DMux4Way(in=load, sel=address[13..14], a=loadram1, b=loadram2, c=loadscreen, d=loadkbd);
+
+    // RAM1 또는 RAM2에 로드할 것인지 판단
+	Or(a=loadram1, b=loadram2, out=loadram);
+
+    // 16K RAM에 대한 처리. 주소의 하위 14비트를 사용
+    RAM16K(in=in, load=loadram, address=address[0..13], out=ramout);
+
+    // 스크린에 대한 처리. 주소의 하위 13비트를 사용
+    Screen(in=in, load=loadscreen, address=address[0..12], out=scrout);
+
+    // 키보드 입력을 받음
+    Keyboard(out=kbout);
+
+    // 주소의 13-14번 비트를 기준으로 출력을 선택: RAM, 스크린, 키보드 중 하나
+    Mux4Way16(a=ramout, b=ramout, c=scrout, d=kbout, sel=address[13..14], out=out);
+}
